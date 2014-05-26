@@ -1,5 +1,5 @@
 import sublime, sublime_plugin
-import os, commands, re, subprocess, sys
+import os, re, subprocess, sys
 
 class PhpSyntaxChecker(sublime_plugin.EventListener):
   # Command refers to $PATH environment variable
@@ -25,14 +25,14 @@ class PhpSyntaxChecker(sublime_plugin.EventListener):
       stderr = response[1]
 
       if len(stderr):
-        sublime.error_message("Execute error\n" + stderr)
- 
+        sublime.error_message("Execute error\n" + stderr.decode())
+
       else:
         rc = re.compile("Parse error.* on line (\d+)")
-        match = rc.search(stdout)
+        match = rc.search(stdout.decode())
 
         if match != None:
-          sublime.error_message("PHP Syntax error\n" + stdout)
+          sublime.error_message("PHP Syntax error\n" + stdout.decode())
 
           line = int(match.group(1)) - 1
           offset = view.text_point(line, 0)
